@@ -20,7 +20,7 @@ NSmap::~NSmap()
 void NSmap::createsence()	
 {
 	My_GraphicsScene* scene = new My_GraphicsScene(this);
-	scene->setSceneRect(626, 366, 1052, 732);
+	scene->setSceneRect(1280, 720, 2360,1440);
 	ui.graphicsView->setScene(scene);
 	qDebug() << "created.";
 	connect(ui.SequenceButton,&QPushButton::clicked,scene,&My_GraphicsScene::SequenceType);

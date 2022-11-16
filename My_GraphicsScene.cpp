@@ -44,10 +44,41 @@ void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                         }
                   }
                   // ´Ó Scene ÉÏÒÆ³ý item
-                  if (itemToRemove != NULL)
+                  if (itemToRemove != NULL) {
                         removeItem(itemToRemove);
+                  }
             }
       }
+}
+
+ void My_GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+{
+       QGraphicsItem* itemToRemove = NULL;
+       QGraphicsItem* itemToChange = NULL;
+       foreach(QGraphicsItem * item, items(event->scenePos())) {
+             if (item->type() == QGraphicsItem::UserType + 2) {
+                   itemToRemove = item;
+                   break;
+             }
+       }
+       foreach(QGraphicsItem* item, items(event->scenePos())) {
+             if (item->type() != QGraphicsItem::UserType + 2 &&item->isSelected()==1) {
+                   itemToChange = item;
+                   break;
+             }
+       }
+       if (itemToRemove != NULL && itemToChange != NULL) {
+             itemToChange->setParentItem(itemToRemove->parentItem());
+             //itemToChange->parentItem()->setSelected(true);
+             itemToChange->setPos(itemToRemove->pos().x(), itemToRemove->pos().y()+50);
+             itemToChange->setFlag(QGraphicsItem::ItemIsMovable, false);
+             removeItem(itemToRemove);
+             itemToChange->setSelected(false);
+             delete(itemToRemove);
+       }
+       else {
+             QGraphicsScene::mouseReleaseEvent(event);
+       }
 }
 
 void My_GraphicsScene::JudgeType()

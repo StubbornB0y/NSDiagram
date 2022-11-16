@@ -22,6 +22,8 @@ public:
 	SharpType sharptype;
 	//QGraphicsSceneMouseEvent* mouseEvent;
 	void mousePressEvent(QGraphicsSceneMouseEvent* event);
+	void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+
 
 signals:
 	void SendClickMassage(QPointF xy, SharpType sharptype);

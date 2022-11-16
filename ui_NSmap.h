@@ -86,7 +86,7 @@ public:
         graphicsView = new QGraphicsView(centralWidget);
         graphicsView->setObjectName(QString::fromUtf8("graphicsView"));
         graphicsView->setEnabled(true);
-        graphicsView->setGeometry(QRect(200, 0, 1051, 731));
+        graphicsView->setGeometry(QRect(200, 0, 2360, 1440));
         NSmapClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(NSmapClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));

@@ -6,19 +6,24 @@
 #include <QGraphicsScene>
 #include "My_GraphicsScene.h"
 using namespace std;
-class NSSharp  : public QGraphicsPolygonItem
+class NSSharp  : public QGraphicsRectItem
 {
 	
 public:
 	int length;
 	int width;
 	string a;
-	std::shared_ptr<NSSharp> b;
-	std::shared_ptr<NSSharp> c;
-	std::shared_ptr<NSSharp> exit;
+	NSSharp *b;
+	NSSharp *c;
+	NSSharp *exit;
 	NSSharp(QGraphicsItem* parent = 0);
 	virtual void show();
+	My_GraphicsScene::SharpType Sharptype;
+
+
 protected:
+	//void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);//item内部画画
+
 	// Shift+左键：进行选择  Alt：准备缩放
 	void mousePressEvent(QGraphicsSceneMouseEvent* event);
 	// Alt+拖拽：进行缩放  移动
@@ -27,7 +32,7 @@ protected:
 	// 使item可使用qgraphicsitem_cast
 	int type() const;
 	QPolygonF mysharp;
-	My_GraphicsScene::SharpType Sharptype;
+	
 	QPointF m_centerPointF;
 	bool m_bResizing;
 private:
@@ -38,6 +43,10 @@ class NS_Standard :public NSSharp {
 public:
 	NS_Standard(QGraphicsItem* parent = 0);
 	void show();
+	int type() const
+	{
+		return UserType + 2;
+	}
 };
 class NS_Sequence :public NSSharp //用于显示基本顺序结构
 {

@@ -1,10 +1,12 @@
 #include "NSSharp.h"
+
+#include <QPainter>
 #include <QKeyEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QDebug>
 
 NSSharp::NSSharp(QGraphicsItem* parent)
-      : QGraphicsPolygonItem(parent)
+      : QGraphicsRectItem(parent)
 {
 
       // »­±Ê - ±ß¿òÉ«
@@ -65,7 +67,7 @@ void NSSharp::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
       if ((event->modifiers() == Qt::AltModifier) && m_bResizing) {
             QPointF pos = event->scenePos();
             double dist = sqrt(pow(m_centerPointF.x() - pos.x(), 2) + pow(m_centerPointF.y() - pos.y(), 2));
-            //setRect(m_centerPointF.x() - this->pos().x() - dist, m_centerPointF.y() - this->pos().y() - dist, dist * 2, dist * 2);
+            setRect(m_centerPointF.x() - this->pos().x() - dist, m_centerPointF.y() - this->pos().y() - dist, dist * 2, dist * 2);
       }
       else if (event->modifiers() != Qt::AltModifier) {
             qDebug() << "Custom item moved.";
@@ -82,6 +84,7 @@ void NSSharp::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
       else {
             QGraphicsItem::mouseReleaseEvent(event);
       }
+      qDebug() << "MouseRelease";
 }
 
 int NSSharp::type() const
@@ -89,19 +92,25 @@ int NSSharp::type() const
       return UserType + 1;
 }
 
+/*void NSSharp::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+      Q_UNUSED(option)
+      Q_UNUSED(widget)
+      painter->drawLine(-this->length / 2, -this->width / 2, 0, this->width/2);
+
+}*/
+
 NS_Standard::NS_Standard(QGraphicsItem* parent)
       :NSSharp(parent)
 {
+      setFlag(QGraphicsItem::ItemIsMovable,false);
       Sharptype = My_GraphicsScene::NSStandard;
       show();
 }
 
 void NS_Standard::show()
 {
-      mysharp << QPointF(-100, -50) << QPointF(100, -50)
-            << QPointF(100, 50) << QPointF(-100, 50)
-            << QPointF(-100, -50);
-      setPolygon(mysharp);
+      
 }
 
 NS_Sequence::NS_Sequence(QGraphicsItem* parent)
@@ -109,29 +118,33 @@ NS_Sequence::NS_Sequence(QGraphicsItem* parent)
 {
       Sharptype = My_GraphicsScene::NSSequence;
       show();
+      b = new NS_Standard(this);
+      b->setRect(-this->length / 2,this->width/2,this->length, this->width);
 }
 void NS_Sequence::show()
 {
-      mysharp << QPointF(-100, -50) << QPointF(100, -50)
-            << QPointF(100, 50) << QPointF(-100, 50)
-            << QPointF(-100, -50);
-      setPolygon(mysharp);
+      this->width = 50;
+      this->length = 120;
+      setRect(-this->length/2, -this->width/2, this->length, this->width);
 }
 
 NS_Judge::NS_Judge(QGraphicsItem* parent)
       :NSSharp(parent)
 {
+      
       Sharptype = My_GraphicsScene::NSJudge;
+      this->width = 50;
+      this->length = 120;
+      setRect(-this->length / 2, -this->width / 2, this->length, this->width);
+      
       show();
 }
 
+
 void NS_Judge::show()
 {
-      mysharp << QPointF(-100, -50) << QPointF(100, -50)
-            << QPointF(100, 50) << QPointF(-100, 50)
-            << QPointF(-100, -50) << QPointF(0, 49)
-            << QPointF(99, -49);
-      setPolygon(mysharp);
+
+     // setPolygon(mysharp);
 }
 
 NS_While::NS_While(QGraphicsItem* parent)
@@ -146,5 +159,5 @@ void NS_While::show()
       mysharp << QPointF(-100, -50) << QPointF(100, -50)
             << QPointF(100, -25) << QPointF(-75, -25)
             << QPointF(-75, 50) << QPointF(-100, 50)<< QPointF(-100, -50);
-      setPolygon(mysharp);
+     // setPolygon(mysharp);
 }
