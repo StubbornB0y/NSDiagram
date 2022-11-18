@@ -19,8 +19,9 @@ void My_GraphicsScene::SequenceType()
 
 void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-      qDebug() << "Custom scene clicked.";
+      
       QGraphicsScene::mousePressEvent(event);
+      qDebug() << "Custom scene clicked."<<event->scenePos();
       if (!event->isAccepted()) {
             if (event->button() == Qt::LeftButton) {
                   // 在 Scene 上添加一个自定义 item
@@ -53,31 +54,38 @@ void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
  void My_GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-       QGraphicsItem* itemToRemove = NULL;
-       QGraphicsItem* itemToChange = NULL;
-       foreach(QGraphicsItem * item, items(event->scenePos())) {
+       NSSharp* itemToRemove = NULL;
+       NSSharp* itemToChange = NULL;
+       foreach(QGraphicsItem * item, items(event->scenePos()))                //寻找嵌入对象
+       {
              if (item->type() == QGraphicsItem::UserType + 2) {
-                   itemToRemove = item;
+                   itemToRemove = dynamic_cast<NSSharp*> (item);
                    break;
              }
        }
-       foreach(QGraphicsItem* item, items(event->scenePos())) {
-             if (item->type() != QGraphicsItem::UserType + 2 &&item->isSelected()==1) {
-                   itemToChange = item;
+       foreach(QGraphicsItem* item, items(event->scenePos()))                 //寻找被嵌入对象
+       {
+             if (item->type() != QGraphicsItem::UserType + 2 && item->isSelected()==true) {
+                   itemToChange = dynamic_cast<NSSharp*> (item);
                    break;
              }
        }
-       if (itemToRemove != NULL && itemToChange != NULL) {
+       if (itemToRemove != NULL && itemToChange != NULL)                      //进行一系列修改
+       {
              itemToChange->setParentItem(itemToRemove->parentItem());
-             //itemToChange->parentItem()->setSelected(true);
-             itemToChange->setPos(itemToRemove->pos().x(), itemToRemove->pos().y()+50);
-             itemToChange->setFlag(QGraphicsItem::ItemIsMovable, false);
+             itemToChange->parentItem()->setSelected(true);
+             itemToChange->setPos(itemToRemove->pos().x(), itemToRemove->pos().y());
+             qDebug() << itemToChange->width;
+             qDebug() << itemToChange->b;
              removeItem(itemToRemove);
              itemToChange->setSelected(false);
              delete(itemToRemove);
+             qDebug() << "changed.";
+             QGraphicsScene::mouseReleaseEvent(event);
        }
        else {
              QGraphicsScene::mouseReleaseEvent(event);
+             qDebug() << "notchanged.";
        }
 }
 
@@ -115,10 +123,9 @@ void My_GraphicsScene::ReceiveClickMassage(QPointF xy, SharpType sharptype)
             break;
       }
       if (sharptype != MouseType) {
-            item->setPos(xy);
+            item->setPos(xy.x() - item->length/2,xy.y()-item->width/2);
             addItem(item);
+
       }
-      this->sharptype = MouseType;
-      qDebug() << "set";
-      
+      this->sharptype = MouseType;    
 }

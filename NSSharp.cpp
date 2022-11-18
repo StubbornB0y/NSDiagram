@@ -8,7 +8,11 @@
 NSSharp::NSSharp(QGraphicsItem* parent)
       : QGraphicsRectItem(parent)
 {
-
+      b = nullptr;
+      c = nullptr;
+      exit = nullptr;
+      length = 0;
+     // width = 0;
       // »­±Ê - ±ß¿òÉ«
       QPen p = pen();
       p.setWidth(2);
@@ -23,6 +27,14 @@ NSSharp::NSSharp(QGraphicsItem* parent)
 
 void NSSharp::show()
 {
+}
+
+void NSSharp::MouseSelect()
+{     
+      setSelected(true);
+      if (parentItem()!=0) {
+            static_cast<NSSharp*>(parentItem())->MouseSelect();
+      }
 }
 
       
@@ -51,9 +63,12 @@ void NSSharp::mousePressEvent(QGraphicsSceneMouseEvent * event)
                   }
             }
             else {
-            qDebug() << "Custom item left clicked.";
-            QGraphicsItem::mousePressEvent(event);
-            event->accept();
+                  qDebug() << "Custom item left clicked.";
+                  QGraphicsItem::mousePressEvent(event);
+                  MouseSelect();
+                  qDebug() << pos();
+                  event->accept();
+
             }
       }
       else if (event->button() == Qt::RightButton) {
@@ -64,19 +79,13 @@ void NSSharp::mousePressEvent(QGraphicsSceneMouseEvent * event)
 
 void NSSharp::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-      if ((event->modifiers() == Qt::AltModifier) && m_bResizing) {
-            QPointF pos = event->scenePos();
-            double dist = sqrt(pow(m_centerPointF.x() - pos.x(), 2) + pow(m_centerPointF.y() - pos.y(), 2));
-            setRect(m_centerPointF.x() - this->pos().x() - dist, m_centerPointF.y() - this->pos().y() - dist, dist * 2, dist * 2);
-      }
-      else if (event->modifiers() != Qt::AltModifier) {
-            qDebug() << "Custom item moved.";
-            QGraphicsItem::mouseMoveEvent(event);
-            qDebug() << "moved" << pos();
-      }
+      
+      qDebug() << "Custom item moved.";
+      QGraphicsItem::mouseMoveEvent(event);
+      qDebug() << "moved" << pos();    
 }
 
-void NSSharp::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+/*void NSSharp::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
       if ((event->modifiers() == Qt::AltModifier) && m_bResizing) {
             m_bResizing = false;
@@ -86,7 +95,7 @@ void NSSharp::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
       }
       qDebug() << "MouseRelease";
 }
-
+*/
 int NSSharp::type() const
 {
       return UserType + 1;
@@ -103,8 +112,10 @@ int NSSharp::type() const
 NS_Standard::NS_Standard(QGraphicsItem* parent)
       :NSSharp(parent)
 {
-      setFlag(QGraphicsItem::ItemIsMovable,false);
+      //setFlag(QGraphicsItem::ItemIsMovable,false);
+      //setFlag(QGraphicsItem::ItemIsSelectable, false);
       Sharptype = My_GraphicsScene::NSStandard;
+      setRect(0,0, this->length, this->width);
       show();
 }
 
@@ -119,13 +130,16 @@ NS_Sequence::NS_Sequence(QGraphicsItem* parent)
       Sharptype = My_GraphicsScene::NSSequence;
       show();
       b = new NS_Standard(this);
-      b->setRect(-this->length / 2,this->width/2,this->length, this->width);
+      b->setPos(0,this->width);
+      b->width = this->width;
+      b->length = this->length;
+      b->setRect(0,0,this->length, this->width);
 }
 void NS_Sequence::show()
 {
       this->width = 50;
       this->length = 120;
-      setRect(-this->length/2, -this->width/2, this->length, this->width);
+      setRect(0, 0, this->length, this->width);
 }
 
 NS_Judge::NS_Judge(QGraphicsItem* parent)

@@ -17,6 +17,7 @@ public:
 	NSSharp *c;
 	NSSharp *exit;
 	NSSharp(QGraphicsItem* parent = 0);
+	void MouseSelect();				//选择子项时自动递归选择其parent函数
 	virtual void show();
 	My_GraphicsScene::SharpType Sharptype;
 
@@ -28,7 +29,7 @@ protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent* event);
 	// Alt+拖拽：进行缩放  移动
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-	void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+	//void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
 	// 使item可使用qgraphicsitem_cast
 	int type() const;
 	QPolygonF mysharp;
