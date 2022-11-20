@@ -85,6 +85,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MyOtherItems.cpp" />
     <ClCompile Include="NSSharp.cpp" />
     <QtRcc Include="NSmap.qrc" />
     <QtMoc Include="NSmap.h" />
@@ -96,6 +97,7 @@
     <QtUic Include="NSmap.ui" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MyOtherItems.h" />
     <ClInclude Include="NSSharp.h" />
     <QtMoc Include="My_GraphicsScene.h" />
     <ClInclude Include="ui_NSmap.h" />

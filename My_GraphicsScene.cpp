@@ -30,16 +30,12 @@ void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                         emit this->SendClickMassage(point, sharptype);
                         qDebug() << "sent";
                   }
-                 /* NSSharp* item = new NSSharp();                            //网上代码
-                  item->setRect(point.x() - 25, point.y() - 25, 60, 60);
-                  addItem(item);
-                  */
             }
             else if (event->button() == Qt::RightButton) {
                   // 检测光标下是否有 item
                   QGraphicsItem* itemToRemove = NULL;
                   foreach(QGraphicsItem * item, items(event->scenePos())) {
-                        if (item->type() == QGraphicsItem::UserType + 1) {
+                        if (item->type() != QGraphicsItem::UserType + 2 && item->type() != QGraphicsItem::UserType + 8) {
                               itemToRemove = item;
                               break;
                         }
@@ -65,18 +61,35 @@ void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
        }
        foreach(QGraphicsItem* item, items(event->scenePos()))                 //寻找被嵌入对象
        {
-             if (item->type() != QGraphicsItem::UserType + 2 && item->isSelected()==true) {
+             if (item->type() != QGraphicsItem::UserType + 2 && item->isSelected()==true && item->type() != QGraphicsItem::UserType + 8) {
                    itemToChange = dynamic_cast<NSSharp*> (item);
                    break;
              }
        }
        if (itemToRemove != NULL && itemToChange != NULL)                      //进行一系列修改
        {
-             itemToChange->setParentItem(itemToRemove->parentItem());
-             itemToChange->parentItem()->setSelected(true);
+             NSSharp* theparent = dynamic_cast<NSSharp*>(itemToRemove->parentItem());
+             //图形层面修改
+             itemToChange->setParentItem(theparent);
+             theparent->setSelected(true);
              itemToChange->setPos(itemToRemove->pos().x(), itemToRemove->pos().y());
+             itemToChange->width = itemToRemove->width;
+             itemToChange->length = itemToRemove->length;
              qDebug() << itemToChange->width;
              qDebug() << itemToChange->b;
+             //以下是数据层面修改
+             //判断parent中哪个指针指向itemtoremove
+             if (theparent->b!=nullptr && theparent->b == itemToRemove) {
+                   theparent->b = itemToChange;
+             }
+             else if (theparent->c != nullptr && theparent->c == itemToRemove) {
+                   theparent->c = itemToChange;
+             }
+             else if (theparent->exit != nullptr && theparent->exit == itemToRemove) {
+                   theparent->exit = itemToChange;
+             }
+             dynamic_cast<NSSharp*>(itemToChange->topLevelItem())->update();
+             
              removeItem(itemToRemove);
              itemToChange->setSelected(false);
              delete(itemToRemove);

@@ -1,5 +1,5 @@
 #include "NSSharp.h"
-
+#include "MyOtherItems.h"
 #include <QPainter>
 #include <QKeyEvent>
 #include <QGraphicsSceneMouseEvent>
@@ -12,7 +12,7 @@ NSSharp::NSSharp(QGraphicsItem* parent)
       c = nullptr;
       exit = nullptr;
       length = 0;
-     // width = 0;
+      width = 0;
       // »­±Ê - ±ß¿òÉ«
       QPen p = pen();
       p.setWidth(2);
@@ -29,6 +29,15 @@ void NSSharp::show()
 {
 }
 
+void NSSharp::update()
+{
+}
+
+int NSSharp::count(int number)
+{
+      return number++;
+}
+
 void NSSharp::MouseSelect()
 {     
       setSelected(true);
@@ -42,6 +51,7 @@ void NSSharp::MouseSelect()
 void NSSharp::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
       if (event->button() == Qt::LeftButton) {
+            /*
             if (event->modifiers() == Qt::ShiftModifier) {
                   qDebug() << "Custom item left clicked with shift key.";// Ñ¡ÖÐ item
                   setSelected(true);
@@ -62,14 +72,12 @@ void NSSharp::mousePressEvent(QGraphicsSceneMouseEvent * event)
                         m_bResizing = false;
                   }
             }
-            else {
-                  qDebug() << "Custom item left clicked.";
-                  QGraphicsItem::mousePressEvent(event);
-                  MouseSelect();
-                  qDebug() << pos();
-                  event->accept();
-
-            }
+            else {*/
+            qDebug() << "Custom item left clicked.";
+            QGraphicsItem::mousePressEvent(event);
+            MouseSelect();
+            qDebug() << pos();
+            event->accept();
       }
       else if (event->button() == Qt::RightButton) {
             qDebug() << "Custom item right clicked.";
@@ -115,63 +123,237 @@ NS_Standard::NS_Standard(QGraphicsItem* parent)
       //setFlag(QGraphicsItem::ItemIsMovable,false);
       //setFlag(QGraphicsItem::ItemIsSelectable, false);
       Sharptype = My_GraphicsScene::NSStandard;
-      setRect(0,0, this->length, this->width);
       show();
 }
 
 void NS_Standard::show()
 {
-      
+      setRect(0,0, this->length, this->width);
+}
+
+void NS_Standard::update()
+{
+      show();
+}
+
+int NS_Standard::count(int number)
+{
+      return (++number);
 }
 
 NS_Sequence::NS_Sequence(QGraphicsItem* parent)
       :NSSharp(parent) 
 {
       Sharptype = My_GraphicsScene::NSSequence;
-      show();
+      
+      this->width = 50;
+      this->length = 120;
       b = new NS_Standard(this);
       b->setPos(0,this->width);
       b->width = this->width;
       b->length = this->length;
       b->setRect(0,0,this->length, this->width);
+      show();
 }
 void NS_Sequence::show()
 {
-      this->width = 50;
-      this->length = 120;
       setRect(0, 0, this->length, this->width);
+}
+
+void NS_Sequence::update()
+{
+      show();
+      if (b != nullptr){
+            b->length = this->length;
+            b->width = this->width;
+            b->setPos(0, this->width);
+            b->update();
+      }
+}
+
+int NS_Sequence::count(int number)
+{
+      if (this->b != nullptr) {
+            return (b->count(number++));
+      }
+      else
+            return number++;
 }
 
 NS_Judge::NS_Judge(QGraphicsItem* parent)
       :NSSharp(parent)
 {
-      
       Sharptype = My_GraphicsScene::NSJudge;
       this->width = 50;
       this->length = 120;
-      setRect(-this->length / 2, -this->width / 2, this->length, this->width);
-      
+      Leftline = new MyLineItem(this);
+      Rightline = new MyLineItem(this);
+      T = new MyTextItem(this);
+      F = new MyTextItem(this);
+      b = new NS_Standard(this);
+      b->setPos(0, this->width);
+      b->width = this->width;
+      b->length = this->length/2;
+      b->setRect(0, 0, b->length, b->width);
+      c = new NS_Standard(this);
+      c->setPos(this->length/2, this->width);
+      c->width = this->width;
+      c->length = this->length / 2;
+      c->setRect(0, 0, c->length, c->width);
+      exit = new NS_Standard(this);
+      exit->setPos(0, this->width*2);
+      exit->width = this->width;
+      exit->length = this->length;
+      exit->setRect(0, 0, exit->length, exit->width);
       show();
 }
 
 
 void NS_Judge::show()
 {
-
+      setRect(0, 0, this->length, this->width);
+      Leftline->setLine(0, 0, this->length / 2, this->width);
+      Rightline->setLine(this->length / 2, this->width, this->length, 0);
+      T->setPlainText("T");
+      T->setPos(10,this->width-25);
+      F->setPlainText("F");
+      F->setPos(this->length-20, this->width - 25);
+      
      // setPolygon(mysharp);
 }
+
+void NS_Judge::update()
+{
+      show();
+      int bnumber = 0, cnumber = 0;
+      int maxwidth = 0;
+      if (b != nullptr) {
+            bnumber = b->count(0);
+      }
+      if (c != nullptr) {
+            cnumber = c->count(0);
+      }
+      if (bnumber > cnumber) {
+            if (b != nullptr) {
+                  b->setPos(0, this->width);
+                  b->width = this->width;
+                  b->length = this->length / 2;
+                  b->update();
+                  maxwidth = (b->childrenBoundingRect()).width() + b->width;
+            }
+            if (c != nullptr) {
+                  c->setPos(0, this->width);
+                  c->width = maxwidth/cnumber;
+                  c->length = this->length / 2;
+                  c->update();
+            }
+      }     
+      else {
+            if (c != nullptr) {
+                  c->setPos(this->length / 2, this->width);
+                  c->width = this->width;
+                  c->length = this->length / 2;
+                  c->update();
+                  maxwidth = (c->childrenBoundingRect()).width() + c->width;
+            }
+            if (b != nullptr) {
+                  b->setPos(0, this->width);
+                  b->width = maxwidth / bnumber;
+                  b->length = this->length / 2;
+                  b->update();
+            }
+      }
+      if (exit != nullptr) {
+            exit->length = this->length;
+            exit->width = this->width;
+            exit->setPos(0, this->width+maxwidth);
+            exit->update();
+      }
+}
+
+int NS_Judge::count(int number)
+{
+      int bnumber=0, cnumber=0;
+      if (b != nullptr) {
+            bnumber = b->count(0);
+      }
+      if (c != nullptr) {
+            cnumber = c->count(0);
+      }
+      if (bnumber > cnumber) {
+            if (exit != nullptr) {
+                  return exit->count(bnumber+(number++));
+            }
+            else {
+                  return bnumber + (number++);
+            }
+      }
+      else {
+            if (exit != nullptr) {
+                  return exit->count(cnumber + (number++));
+            }
+            else {
+                  return cnumber + (number++);
+            }
+      }
+}
+
+
 
 NS_While::NS_While(QGraphicsItem* parent)
 {
       Sharptype = My_GraphicsScene::NSWhile;
+      this->width = 50;
+      this->length = 120;
+      b = new NS_Standard(this);
+      b->setPos(20, this->width);
+      b->width = this->width;
+      b->length = this->length-20;
+      b->setRect(0, 0, b->length, b->width);
+      childwidth = (b->childrenBoundingRect()).width() + b->width;
+      exit = new NS_Standard(this);
+      exit->setPos(0, this->width + this->childwidth);
+      exit->width = this->width;
+      exit->length = this->length;
+      exit->setRect(0, 0, exit->length, exit->width);
       show();
       
 }
 
 void NS_While::show()
 {
-      mysharp << QPointF(-100, -50) << QPointF(100, -50)
-            << QPointF(100, -25) << QPointF(-75, -25)
-            << QPointF(-75, 50) << QPointF(-100, 50)<< QPointF(-100, -50);
-     // setPolygon(mysharp);
+      setRect(0, 0, this->length, this->width + this->childwidth);
+}
+
+int NS_While::count(int number)
+{
+      int bnumber = 0;
+      if (b != nullptr) {
+            bnumber = b->count(0);
+      }
+      if (exit != nullptr) {
+            return exit->count(bnumber + (number++));
+      }
+      else {
+            return bnumber + (number++);
+      }
+}
+
+void NS_While::update() {
+      
+      if (b != nullptr) {
+            b->length = this->length-20;
+            b->width = this->width;
+            b->setPos(20, this->width);
+            b->update();
+            childwidth = (b->childrenBoundingRect()).width() + b->width;
+      }
+      show();
+      if (exit != nullptr) {
+            exit->length = this->length;
+            exit->width = this->width;
+            exit->setPos(0, this->width + childwidth);
+            exit->update();
+      }
+      
 }
