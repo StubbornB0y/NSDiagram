@@ -105,7 +105,7 @@ void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
              qDebug() << "notchanged.";
        }
 }
-
+  
 void My_GraphicsScene::JudgeType()
 {
 	this->sharptype = NSJudge;

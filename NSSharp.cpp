@@ -181,7 +181,7 @@ int NS_Sequence::count(int number)
             return (b->count(++number));
       }
       else
-            return ++number;
+            return ++number;//一定要++number 一定要++number 一定要++number 要不就加括号
 }
 
 NS_Judge::NS_Judge(QGraphicsItem* parent)
