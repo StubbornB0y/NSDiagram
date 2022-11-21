@@ -75,11 +75,11 @@ void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
              itemToChange->setPos(itemToRemove->pos().x(), itemToRemove->pos().y());
              itemToChange->width = itemToRemove->width;
              itemToChange->length = itemToRemove->length;
-             qDebug() << itemToChange->width;
-             qDebug() << itemToChange->b;
+             //qDebug() << itemToChange->width;
+             //qDebug() << itemToChange->b;
              //以下是数据层面修改
              //判断parent中哪个指针指向itemtoremove
-             if (theparent->b!=nullptr && theparent->b == itemToRemove) {
+             if (theparent->b != nullptr && theparent->b == itemToRemove) {
                    theparent->b = itemToChange;
              }
              else if (theparent->c != nullptr && theparent->c == itemToRemove) {
@@ -89,7 +89,11 @@ void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                    theparent->exit = itemToChange;
              }
              dynamic_cast<NSSharp*>(itemToChange->topLevelItem())->update();
-             
+             if (itemToChange->b->length <= 80)     //实现自动放大
+             {
+                   dynamic_cast<NSSharp*>(itemToChange->topLevelItem())->length= dynamic_cast<NSSharp*>(itemToChange->topLevelItem())->length*2;
+                   dynamic_cast<NSSharp*>(itemToChange->topLevelItem())->update();
+             }
              removeItem(itemToRemove);
              itemToChange->setSelected(false);
              delete(itemToRemove);

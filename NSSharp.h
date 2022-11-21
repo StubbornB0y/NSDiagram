@@ -65,6 +65,7 @@ public:
 class NS_Judge :public NSSharp //基本判断结构 if。。。else
 {
 public:
+	int maxwidth;
 	int count(int number);
 	void update();
 	NS_Judge(QGraphicsItem* parent = 0);

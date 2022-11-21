@@ -77,6 +77,10 @@ void NSSharp::mousePressEvent(QGraphicsSceneMouseEvent * event)
             QGraphicsItem::mousePressEvent(event);
             MouseSelect();
             qDebug() << pos();
+            if(b!=nullptr)
+            qDebug() << (b->count(0));
+            if(c!=nullptr)
+            qDebug() << (c->count(0));
             event->accept();
       }
       else if (event->button() == Qt::RightButton) {
@@ -147,7 +151,7 @@ NS_Sequence::NS_Sequence(QGraphicsItem* parent)
       Sharptype = My_GraphicsScene::NSSequence;
       
       this->width = 50;
-      this->length = 120;
+      this->length = 200;
       b = new NS_Standard(this);
       b->setPos(0,this->width);
       b->width = this->width;
@@ -173,11 +177,11 @@ void NS_Sequence::update()
 
 int NS_Sequence::count(int number)
 {
-      if (this->b != nullptr) {
-            return (b->count(number++));
+      if (b != nullptr) {
+            return (b->count(++number));
       }
       else
-            return number++;
+            return ++number;
 }
 
 NS_Judge::NS_Judge(QGraphicsItem* parent)
@@ -185,7 +189,7 @@ NS_Judge::NS_Judge(QGraphicsItem* parent)
 {
       Sharptype = My_GraphicsScene::NSJudge;
       this->width = 50;
-      this->length = 120;
+      this->length = 200;
       Leftline = new MyLineItem(this);
       Rightline = new MyLineItem(this);
       T = new MyTextItem(this);
@@ -215,7 +219,7 @@ void NS_Judge::show()
       Leftline->setLine(0, 0, this->length / 2, this->width);
       Rightline->setLine(this->length / 2, this->width, this->length, 0);
       T->setPlainText("T");
-      T->setPos(10,this->width-25);
+      T->setPos(5,this->width-25);
       F->setPlainText("F");
       F->setPos(this->length-20, this->width - 25);
       
@@ -226,35 +230,35 @@ void NS_Judge::update()
 {
       show();
       int bnumber = 0, cnumber = 0;
-      int maxwidth = 0;
       if (b != nullptr) {
             bnumber = b->count(0);
       }
       if (c != nullptr) {
             cnumber = c->count(0);
       }
-      if (bnumber > cnumber) {
+      if (bnumber >= cnumber) {
             if (b != nullptr) {
                   b->setPos(0, this->width);
                   b->width = this->width;
                   b->length = this->length / 2;
                   b->update();
-                  maxwidth = (b->childrenBoundingRect()).width() + b->width;
+                  maxwidth =( (b->boundingRect()).united(b->childrenBoundingRect() ) ).height()-2 ;
+                  //注:united函数和childrenBoundingRect分别会多框1格 所以-2 下同      
             }
             if (c != nullptr) {
-                  c->setPos(0, this->width);
+                  c->setPos(this->length / 2, this->width);
                   c->width = maxwidth/cnumber;
                   c->length = this->length / 2;
                   c->update();
             }
       }     
-      else {
+      else if(bnumber<cnumber){
             if (c != nullptr) {
                   c->setPos(this->length / 2, this->width);
                   c->width = this->width;
                   c->length = this->length / 2;
                   c->update();
-                  maxwidth = (c->childrenBoundingRect()).width() + c->width;
+                  maxwidth = ((c->boundingRect()).united(c->childrenBoundingRect())).height()-2;
             }
             if (b != nullptr) {
                   b->setPos(0, this->width);
@@ -282,18 +286,18 @@ int NS_Judge::count(int number)
       }
       if (bnumber > cnumber) {
             if (exit != nullptr) {
-                  return exit->count(bnumber+(number++));
+                  return exit->count(bnumber+(++number));
             }
             else {
-                  return bnumber + (number++);
+                  return bnumber + (++number);
             }
       }
       else {
             if (exit != nullptr) {
-                  return exit->count(cnumber + (number++));
+                  return exit->count(cnumber + (++number));
             }
             else {
-                  return cnumber + (number++);
+                  return cnumber + (++number);
             }
       }
 }
@@ -304,7 +308,7 @@ NS_While::NS_While(QGraphicsItem* parent)
 {
       Sharptype = My_GraphicsScene::NSWhile;
       this->width = 50;
-      this->length = 120;
+      this->length = 200;
       b = new NS_Standard(this);
       b->setPos(20, this->width);
       b->width = this->width;
@@ -332,10 +336,10 @@ int NS_While::count(int number)
             bnumber = b->count(0);
       }
       if (exit != nullptr) {
-            return exit->count(bnumber + (number++));
+            return exit->count(bnumber + (++number));
       }
       else {
-            return bnumber + (number++);
+            return bnumber + (++number);
       }
 }
 
@@ -346,7 +350,7 @@ void NS_While::update() {
             b->width = this->width;
             b->setPos(20, this->width);
             b->update();
-            childwidth = (b->childrenBoundingRect()).width() + b->width;
+            childwidth = ((b->boundingRect()).united(b->childrenBoundingRect())).height()-2;
       }
       show();
       if (exit != nullptr) {
