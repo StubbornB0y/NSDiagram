@@ -42,7 +42,28 @@ void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                   }
                   // 从 Scene 上移除 item
                   if (itemToRemove != NULL) {
-                        removeItem(itemToRemove);
+                        NSSharp* theparent = dynamic_cast<NSSharp*>(itemToRemove->parentItem());
+                        if (theparent != nullptr) {
+                              //判断parent中哪个指针指向itemtoremove
+                              if (theparent->b != nullptr && theparent->b == itemToRemove) {
+                                    theparent->b = nullptr;
+                              }
+                              else if (theparent->c != nullptr && theparent->c == itemToRemove) {
+                                    theparent->c = nullptr;
+                              }
+                              else if (theparent->exit != nullptr && theparent->exit == itemToRemove) {
+                                    theparent->exit = nullptr;
+                              }
+
+                              NSSharp* topitem = dynamic_cast<NSSharp*>(itemToRemove->topLevelItem());
+                              removeItem(itemToRemove);
+                              delete(itemToRemove);
+                              topitem->update();
+                        }
+                        else {
+                              removeItem(itemToRemove);
+                              delete(itemToRemove);
+                        }
                   }
             }
       }

@@ -13,7 +13,7 @@ class NSSharp  : public QGraphicsRectItem
 public:
 	int length;
 	int width;
-	//string a;
+	MyTextItem *a;
 	NSSharp *b;
 	NSSharp *c;
 	NSSharp *exit;
@@ -24,7 +24,7 @@ public:
 	virtual int count(int number);				//统计NS_JUDGE的c指针后的个数以便计算宽度
 	My_GraphicsScene::SharpType Sharptype;
 	int type() const;
-
+	void textshow();
 protected:
 	//void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);//item内部画画
 
@@ -35,10 +35,7 @@ protected:
 	//void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
 	// 使item可使用qgraphicsitem_cast
 	
-	QPolygonF mysharp;
-	
-	QPointF m_centerPointF;
-	bool m_bResizing;
+
 private:
 	
 };
@@ -73,8 +70,8 @@ public:
 private:	
 	MyLineItem* Leftline;
 	MyLineItem* Rightline;
-	MyTextItem* T;
-	MyTextItem* F;
+	MySimpleTextItem* T;
+	MySimpleTextItem* F;
 };
 class NS_While :public NSSharp {
 public:
