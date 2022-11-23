@@ -118,7 +118,7 @@ public:
         actionNew->setText(QCoreApplication::translate("NSmapClass", "New", nullptr));
         actionOpen->setText(QCoreApplication::translate("NSmapClass", "Open", nullptr));
         actionSave->setText(QCoreApplication::translate("NSmapClass", "Save", nullptr));
-        actionSave_as->setText(QCoreApplication::translate("NSmapClass", "Save as", nullptr));
+        actionSave_as->setText(QCoreApplication::translate("NSmapClass", "Save as C", nullptr));
         SequenceButton->setText(QString());
         JudgeButton->setText(QString());
         WhileButton->setText(QString());

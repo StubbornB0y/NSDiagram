@@ -1,11 +1,13 @@
 #include "NSSharp.h"
 #include "MyOtherItems.h"
-#include <QPainter>
 #include <QKeyEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QDebug>
 #include <qtextcursor.h>
 #include<qtextformat.h>
+#include <iostream>
+#include <iomanip>
+using namespace std;
 
 NSSharp::NSSharp(QGraphicsItem* parent)
       : QGraphicsRectItem(parent)
@@ -44,8 +46,8 @@ int NSSharp::count(int number)
 void NSSharp::MouseSelect()
 {     
       setSelected(true);
-      if (parentItem()!=0) {
-            static_cast<NSSharp*>(parentItem())->MouseSelect();
+      if (parentItem()!=nullptr) {
+            dynamic_cast<NSSharp*>(parentItem())->MouseSelect();
       }
 }
 
@@ -65,6 +67,11 @@ void NSSharp::mousePressEvent(QGraphicsSceneMouseEvent * event)
       else if (event->button() == Qt::RightButton) {
             event->ignore();
       }
+}
+
+void NSSharp::F_out(int indent, QTextStream* out)
+{
+
 }
 
 void NSSharp::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
@@ -100,7 +107,7 @@ NS_Standard::NS_Standard(QGraphicsItem* parent)
 {
       //setFlag(QGraphicsItem::ItemIsMovable,false);
       //setFlag(QGraphicsItem::ItemIsSelectable, false);
-      Sharptype = My_GraphicsScene::NSStandard;
+      //Sharptype = My_GraphicsScene::NSStandard;
       
       show();
 }
@@ -116,6 +123,13 @@ void NS_Standard::update()
       show();
 }
 
+void NS_Standard::F_out(int indent, QTextStream* out)
+{
+      for (int i = 0; i < indent; i++)
+            *out << "   ";
+      *out << a->toPlainText() <<";" << "\n";
+}
+
 int NS_Standard::count(int number)
 {
       return (++number);
@@ -124,7 +138,7 @@ int NS_Standard::count(int number)
 NS_Sequence::NS_Sequence(QGraphicsItem* parent)
       :NSSharp(parent) 
 {
-      Sharptype = My_GraphicsScene::NSSequence;
+     // Sharptype = My_GraphicsScene::NSSequence;
       
       this->width = 50;
       this->length = 200;
@@ -164,10 +178,18 @@ int NS_Sequence::count(int number)
             return ++number;//一定要++number 一定要++number 一定要++number 要不就加括号
 }
 
+void NS_Sequence::F_out(int indent, QTextStream* out) {
+      for (int i = 0; i < indent; i++)
+            *out << "   ";
+      *out<< a->toPlainText() <<";"<< "\n";
+      if (b != nullptr)
+            b->F_out(indent, out);
+}
+
 NS_Judge::NS_Judge(QGraphicsItem* parent)
       :NSSharp(parent)
 {
-      Sharptype = My_GraphicsScene::NSJudge;
+      //Sharptype = My_GraphicsScene::NSJudge;
       this->width = 50;
       this->length = 200;
       Leftline = new MyLineItem(this);
@@ -289,11 +311,37 @@ int NS_Judge::count(int number)
       }
 }
 
+void NS_Judge::F_out(int indent, QTextStream* out)
+{
+      for (int i = 0; i < indent; i++)
+            *out << "   ";
+      *out <<  "if(" << a->toPlainText() << "){" << "\n";
+      indent++;
+      if (b != nullptr)
+            b->F_out(indent,out);
+      indent--;
+      for (int i = 0; i < indent; i++)
+            *out << "   ";
+      *out <<  "}" << "\n";
+      for (int i = 0; i < indent; i++)
+            *out << "   ";
+      *out << "else{" << "\n";
+      indent++;
+      if (c != nullptr)
+            c->F_out(indent,out);
+      indent--;
+      for (int i = 0; i < indent; i++)
+            *out << "   ";
+      *out << "}" <<"\n";
+      if (exit != nullptr)
+            exit->F_out(indent,out);
+}
+
 
 
 NS_While::NS_While(QGraphicsItem* parent)
 {
-      Sharptype = My_GraphicsScene::NSWhile;
+      //Sharptype = My_GraphicsScene::NSWhile;
       this->width = 50;
       this->length = 200;
       b = new NS_Standard(this);
@@ -331,6 +379,22 @@ int NS_While::count(int number)
       else {
             return bnumber + (++number);
       }
+}
+
+void NS_While::F_out(int indent, QTextStream *out)
+{
+      for (int i = 0; i < indent; i++)
+            *out << "   ";
+      *out << "while(" << a->toPlainText() << "){" << "\n";
+      indent++;
+      if (b != nullptr)
+            b->F_out(indent, out);
+      indent--;
+      for (int i = 0; i < indent; i++)
+            *out << "   ";
+      *out << "}" << "\n";
+      if (exit != nullptr)
+            exit->F_out(indent, out);
 }
 
 void NS_While::update() {

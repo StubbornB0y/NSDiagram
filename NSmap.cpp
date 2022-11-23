@@ -5,7 +5,7 @@
 #include <iomanip>
 #include "qdebug.h"
 using namespace std;
-static int indent = 1;
+
 NSmap::NSmap(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -27,7 +27,7 @@ void NSmap::createsence()
 	connect(ui.JudgeButton, &QPushButton::clicked, scene, &My_GraphicsScene::JudgeType);
 	connect(ui.WhileButton, &QPushButton::clicked, scene, &My_GraphicsScene::WhileType);
 	connect(scene,&My_GraphicsScene::SendClickMassage,scene,&My_GraphicsScene::ReceiveClickMassage);
-	
+	connect(ui.actionSave_as, &QAction::triggered,scene,&My_GraphicsScene::translatingC);
 }
 
 

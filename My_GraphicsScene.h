@@ -2,13 +2,16 @@
 #ifndef MY_GRAPHICSSCENE_H
 #define MY_GRAPHICSSCENE_H
 
+#include <QGraphicsRectItem>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include "NSSharp.h"
 class My_GraphicsScene  : public QGraphicsScene
 {
 	Q_OBJECT
 
 public:
+	NSSharp* topitem;
 	My_GraphicsScene(QObject *parent);
 	~My_GraphicsScene();
 	enum SharpType			//枚举变量，发送应该创造哪类Item
@@ -23,16 +26,17 @@ public:
 	//QGraphicsSceneMouseEvent* mouseEvent;
 	void mousePressEvent(QGraphicsSceneMouseEvent* event);
 	void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
-
-
+	
 signals:
 	void SendClickMassage(QPointF xy, SharpType sharptype);
 
 public slots:
+	void translatingC();
 	void SequenceType();
 	void JudgeType();
 	void WhileType();
 	void ReceiveClick();
 	void ReceiveClickMassage(QPointF xy, SharpType sharptype);
 };
+
 #endif

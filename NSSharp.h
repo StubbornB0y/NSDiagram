@@ -4,9 +4,10 @@
 
 #include <QGraphicsRectItem>
 #include <QGraphicsScene>
-#include "My_GraphicsScene.h"
+//#include "My_GraphicsScene.h"
 #include "MyOtherItems.h"
-using namespace std;
+#include <qtextstream.h>
+
 class NSSharp  : public QGraphicsRectItem
 {
 	
@@ -22,9 +23,9 @@ public:
 	virtual void show();
 	virtual void update();				//递归更新其子项
 	virtual int count(int number);				//统计NS_JUDGE的c指针后的个数以便计算宽度
-	My_GraphicsScene::SharpType Sharptype;
 	int type() const;
 	void textshow();
+	virtual void F_out(int indent, QTextStream* out);
 protected:
 	//void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);//item内部画画
 
@@ -46,6 +47,7 @@ public:
 	void show();
 	void update();
 	int count(int number);
+	void F_out(int indent, QTextStream* out);
 	int type() const
 	{
 		return UserType + 2;
@@ -57,6 +59,7 @@ public:
 	void update();
 	int count(int number);
 	NS_Sequence(QGraphicsItem* parent = 0);
+	void F_out(int indent, QTextStream* out);
 	void show();
 };
 class NS_Judge :public NSSharp //基本判断结构 if。。。else
@@ -65,6 +68,7 @@ public:
 	int maxwidth;
 	int count(int number);
 	void update();
+	void F_out(int indent, QTextStream* out);
 	NS_Judge(QGraphicsItem* parent = 0);
 	void show();
 private:	
@@ -77,6 +81,7 @@ class NS_While :public NSSharp {
 public:
 	int childwidth;
 	int count(int number);
+	void F_out(int indent, QTextStream* out);
 	void update();
 	NS_While(QGraphicsItem* parent = 0);
 	void show();

@@ -1,6 +1,8 @@
 #include "My_GraphicsScene.h"
 #include "NSSharp.h"
 #include "qdebug.h"
+#include <qfile.h>
+#include <QTextStream>
 
 My_GraphicsScene::My_GraphicsScene(QObject *parent)
 	: QGraphicsScene(parent)
@@ -55,7 +57,7 @@ void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                                     theparent->exit = nullptr;
                               }
 
-                              NSSharp* topitem = dynamic_cast<NSSharp*>(itemToRemove->topLevelItem());
+                              topitem = dynamic_cast<NSSharp*>(itemToRemove->topLevelItem());
                               removeItem(itemToRemove);
                               delete(itemToRemove);
                               topitem->update();
@@ -63,6 +65,7 @@ void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                         else {
                               removeItem(itemToRemove);
                               delete(itemToRemove);
+                              topitem = nullptr;
                         }
                   }
             }
@@ -87,10 +90,12 @@ void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                    break;
              }
        }
-       if (itemToRemove != NULL && itemToChange != NULL)                      //进行一系列修改
+       //由于NS——While中的NS_Standard完全包含在其图形中，在点击while中的b指针项时Release事件依然会满足条件从而引发bug，所以再写
+       if (itemToRemove != NULL && itemToChange != NULL && itemToRemove->topLevelItem() != itemToChange->topLevelItem())                      //进行一系列修改
        {
              NSSharp* theparent = dynamic_cast<NSSharp*>(itemToRemove->parentItem());
              //图形层面修改
+             itemToChange = dynamic_cast<NSSharp*>(itemToChange->topLevelItem());
              itemToChange->setParentItem(theparent);
              theparent->setSelected(true);
              itemToChange->setPos(itemToRemove->pos().x(), itemToRemove->pos().y());
@@ -109,11 +114,12 @@ void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
              else if (theparent->exit != nullptr && theparent->exit == itemToRemove) {
                    theparent->exit = itemToChange;
              }
-             dynamic_cast<NSSharp*>(itemToChange->topLevelItem())->update();
-             if (itemToChange->b->length <= 80)     //实现自动放大
+             topitem = dynamic_cast<NSSharp*>(itemToChange->topLevelItem());
+             topitem->update();
+             if (itemToChange->b->length <= 70)     //实现自动放大
              {
-                   dynamic_cast<NSSharp*>(itemToChange->topLevelItem())->length= dynamic_cast<NSSharp*>(itemToChange->topLevelItem())->length*2;
-                   dynamic_cast<NSSharp*>(itemToChange->topLevelItem())->update();
+                   topitem->length = topitem->length * 2;
+                   topitem->update();
              }
              removeItem(itemToRemove);
              itemToChange->setSelected(false);
@@ -163,7 +169,22 @@ void My_GraphicsScene::ReceiveClickMassage(QPointF xy, SharpType sharptype)
       if (sharptype != MouseType) {
             item->setPos(xy.x() - item->length/2,xy.y()-item->width/2);
             addItem(item);
-
       }
       this->sharptype = MouseType;    
+}
+void My_GraphicsScene::translatingC() {
+      qDebug() << "buttonclick";
+      QFile* file = new QFile("./NSDiagram.c");
+      if (!file->open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qDebug() << "file open failed";
+      }
+      QTextStream* out=new QTextStream (file);
+      //向文件中写入两行字符串
+      *out << "#include<stdio.h>"<< "\n";
+      *out << "void main(){" << "\n";
+      if (topitem != nullptr) {
+            topitem->F_out(1,out);
+      }
+      *out << "}" << "\n";
+      file->close();
 }
