@@ -37,6 +37,7 @@ public:
     QPushButton *SequenceButton;
     QPushButton *JudgeButton;
     QPushButton *WhileButton;
+    QPushButton* DoWhileButton;
     QGraphicsView *graphicsView;
     QMenuBar *menuBar;
     QMenu *menu;
@@ -82,6 +83,11 @@ public:
         WhileButton->setEnabled(true);
         WhileButton->setGeometry(QRect(10, 70, 81, 61));
         WhileButton->setStyleSheet(QString::fromUtf8("border-image: url(:/NSmap/While.png);"));
+        DoWhileButton = new QPushButton(scrollAreaWidgetContents);
+        DoWhileButton->setObjectName(QString::fromUtf8("DoWhileButton"));
+        DoWhileButton->setEnabled(true);
+        DoWhileButton->setGeometry(QRect(100, 70, 81, 61));
+        DoWhileButton->setStyleSheet(QString::fromUtf8("border-image: url(:/NSmap/DoWhile.png);"));
         scrollArea->setWidget(scrollAreaWidgetContents);
         graphicsView = new QGraphicsView(centralWidget);
         graphicsView->setObjectName(QString::fromUtf8("graphicsView"));

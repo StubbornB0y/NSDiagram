@@ -3,7 +3,7 @@
 #include "qdebug.h"
 #include <qfile.h>
 #include <QTextStream>
-
+#include <qdesktopservices.h>
 My_GraphicsScene::My_GraphicsScene(QObject *parent)
 	: QGraphicsScene(parent)
 {
@@ -78,7 +78,7 @@ void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
        NSSharp* itemToChange = NULL;
        foreach(QGraphicsItem * item, items(event->scenePos()))                //寻找嵌入对象
        {
-             if (item->type() == QGraphicsItem::UserType + 2) {
+             if (item->type() == QGraphicsItem::UserType + 2 && item->isSelected() == false) {
                    itemToRemove = dynamic_cast<NSSharp*> (item);
                    break;
              }
@@ -116,7 +116,7 @@ void My_GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
              }
              topitem = dynamic_cast<NSSharp*>(itemToChange->topLevelItem());
              topitem->update();
-             if (itemToChange->b->length <= 70)     //实现自动放大
+             if (itemToChange->b->length <= 80)     //实现自动放大
              {
                    topitem->length = topitem->length * 2;
                    topitem->update();
@@ -145,12 +145,10 @@ void My_GraphicsScene::WhileType()
       qDebug() << "changed.";
 }
 
-void My_GraphicsScene::ReceiveClick()
+void My_GraphicsScene::DoWhileType()
 {
-/*
-	mousePressEvent(this->mouseEvent);
-	QPointF xy=mouseEvent->pos();
-	emit this->SendClickMassage(xy,this->sharptype);*/
+      this->sharptype = NSDoWhile;
+      qDebug() << "changed.";
 }
 
 void My_GraphicsScene::ReceiveClickMassage(QPointF xy, SharpType sharptype)
@@ -163,6 +161,8 @@ void My_GraphicsScene::ReceiveClickMassage(QPointF xy, SharpType sharptype)
             item = new NS_Judge(); break;
       case(NSWhile):
             item = new NS_While(); break;
+      case(NSDoWhile):
+            item = new NS_DoWhile(); break;
       default:
             break;
       }
@@ -187,4 +187,5 @@ void My_GraphicsScene::translatingC() {
       }
       *out << "}" << "\n";
       file->close();
+      QDesktopServices::openUrl(QUrl::fromLocalFile("./NSDiagram.c"));
 }

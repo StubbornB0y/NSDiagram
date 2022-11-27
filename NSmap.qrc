@@ -1,7 +1,8 @@
 <RCC>
-  <qresource prefix="NSmap">
-    <file>While.png</file>
-    <file>Judge.png</file>
-    <file>NS_order.png</file>
-  </qresource>
+    <qresource prefix="/NSmap">
+        <file>While.png</file>
+        <file>Judge.png</file>
+        <file>NS_order.png</file>
+        <file>DoWhile.png</file>
+    </qresource>
 </RCC>

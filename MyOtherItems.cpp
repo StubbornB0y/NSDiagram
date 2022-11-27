@@ -69,5 +69,11 @@ void MyTextItem::mousePressEvent(QGraphicsSceneMouseEvent* event){
 	}
 }
 
+void MyTextItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
+{
+	QGraphicsItem::mouseDoubleClickEvent(event);
+}
+
+
 
 

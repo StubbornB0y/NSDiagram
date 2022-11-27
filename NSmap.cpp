@@ -26,6 +26,7 @@ void NSmap::createsence()
 	connect(ui.SequenceButton,&QPushButton::clicked,scene,&My_GraphicsScene::SequenceType);
 	connect(ui.JudgeButton, &QPushButton::clicked, scene, &My_GraphicsScene::JudgeType);
 	connect(ui.WhileButton, &QPushButton::clicked, scene, &My_GraphicsScene::WhileType);
+	connect(ui.DoWhileButton, &QPushButton::clicked, scene, &My_GraphicsScene::DoWhileType);
 	connect(scene,&My_GraphicsScene::SendClickMassage,scene,&My_GraphicsScene::ReceiveClickMassage);
 	connect(ui.actionSave_as, &QAction::triggered,scene,&My_GraphicsScene::translatingC);
 }

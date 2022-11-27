@@ -20,7 +20,8 @@ public:
 		NSSequence,			//顺序
 		NSJudge,			//判断
 		NSWhile,			//循环
-		NSStandard			//基本		
+		NSStandard,			//基本	
+		NSDoWhile
 	};
 	SharpType sharptype;
 	//QGraphicsSceneMouseEvent* mouseEvent;
@@ -35,7 +36,7 @@ public slots:
 	void SequenceType();
 	void JudgeType();
 	void WhileType();
-	void ReceiveClick();
+	void DoWhileType();
 	void ReceiveClickMassage(QPointF xy, SharpType sharptype);
 };
 

@@ -51,8 +51,6 @@ void NSSharp::MouseSelect()
       }
 }
 
-      
-
 void NSSharp::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
       if (event->button() == Qt::LeftButton) {
@@ -102,6 +100,7 @@ int NSSharp::type() const
 }
 
 
+
 NS_Standard::NS_Standard(QGraphicsItem* parent)
       :NSSharp(parent)
 {
@@ -135,13 +134,14 @@ int NS_Standard::count(int number)
       return (++number);
 }
 
+
+
 NS_Sequence::NS_Sequence(QGraphicsItem* parent)
       :NSSharp(parent) 
 {
      // Sharptype = My_GraphicsScene::NSSequence;
-      
-      this->width = 50;
-      this->length = 200;
+      //this->width = 50;
+      //this->length = 200;
       
       b = new NS_Standard(this);
       b->setPos(0,this->width);
@@ -151,6 +151,7 @@ NS_Sequence::NS_Sequence(QGraphicsItem* parent)
       b->textshow();
       show();
 }
+
 void NS_Sequence::show()
 {
       setRect(0, 0, this->length, this->width);
@@ -186,12 +187,14 @@ void NS_Sequence::F_out(int indent, QTextStream* out) {
             b->F_out(indent, out);
 }
 
+
+
 NS_Judge::NS_Judge(QGraphicsItem* parent)
       :NSSharp(parent)
 {
       //Sharptype = My_GraphicsScene::NSJudge;
-      this->width = 50;
-      this->length = 200;
+      //this->width = 50;
+      //this->length = 200;
       Leftline = new MyLineItem(this);
       Rightline = new MyLineItem(this);
       T = new MySimpleTextItem(this);
@@ -219,7 +222,6 @@ NS_Judge::NS_Judge(QGraphicsItem* parent)
       exit->textshow();
       show();
 }
-
 
 void NS_Judge::show()
 {
@@ -342,8 +344,8 @@ void NS_Judge::F_out(int indent, QTextStream* out)
 NS_While::NS_While(QGraphicsItem* parent)
 {
       //Sharptype = My_GraphicsScene::NSWhile;
-      this->width = 50;
-      this->length = 200;
+      //this->width = 50;
+      //this->length = 200;
       b = new NS_Standard(this);
       b->setPos(20, this->width);
       b->width = this->width;
@@ -414,4 +416,98 @@ void NS_While::update() {
             exit->update();
       }
       
+}
+
+
+
+NS_DoWhile::NS_DoWhile(QGraphicsItem* parent)
+{
+      //Sharptype = My_GraphicsScene::NSWhile;
+      //this->width = 50;
+      //this->length = 200;
+      b = new NS_Standard(this);
+      b->setPos(0, 0);
+      b->width = this->width;
+      b->length = this->length - 20;
+      b->setRect(0, 0, b->length, b->width);
+      b->textshow();
+      childwidth = ((b->boundingRect()).united(b->childrenBoundingRect())).height() - 2;
+      exit = new NS_Standard(this);
+      exit->setPos(0, this->width + this->childwidth);
+      exit->width = this->width;
+      exit->length = this->length;
+      exit->setRect(0, 0, exit->length, exit->width);
+      exit->textshow();
+      show();
+
+}
+
+void NS_DoWhile::show()
+{
+      setRect(0, 0, this->length, this->width + this->childwidth);
+      textshow();
+}
+
+int NS_DoWhile::count(int number)
+{
+      int bnumber = 0;
+      if (b != nullptr) {
+            bnumber = b->count(0);
+      }
+      if (exit != nullptr) {
+            return exit->count(bnumber + (++number));
+      }
+      else {
+            return bnumber + (++number);
+      }
+}
+
+void NS_DoWhile::F_out(int indent, QTextStream* out)
+{
+      for (int i = 0; i < indent; i++)
+            *out << "   ";
+      *out << "do{" << "\n";
+      indent++;
+      if (b != nullptr)
+            b->F_out(indent, out);
+      indent--;
+      for (int i = 0; i < indent; i++)
+            *out << "   ";
+      *out << "}" << "\n";
+      for (int i = 0; i < indent; i++)
+            *out << "   ";
+      *out << "while(" << a->toPlainText() << ");" << "\n";
+      if (exit != nullptr)
+            exit->F_out(indent, out);
+}
+
+void NS_DoWhile::update() {
+
+      if (b != nullptr) {
+            b->length = this->length - 20;
+            b->width = this->width;
+            b->setPos(0, 0);
+            b->update();
+            childwidth = ((b->boundingRect()).united(b->childrenBoundingRect())).height() - 2;
+      }
+      show();
+      if (exit != nullptr) {
+            exit->length = this->length;
+            exit->width = this->width;
+            exit->setPos(0, this->width + childwidth);
+            exit->update();
+      }
+
+}
+
+void NS_DoWhile::textshow() {
+      a->setTextWidth(this->length - 20);
+      a->setPos(10, (this->width / 2 - 20)+childwidth);
+      QTextBlockFormat format;
+      format.setAlignment(Qt::AlignCenter);
+      QTextCursor cursor = a->textCursor();
+      cursor.select(QTextCursor::Document);
+      cursor.mergeBlockFormat(format);
+      cursor.clearSelection();
+      a->setTextCursor(cursor);
 }

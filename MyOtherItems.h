@@ -35,4 +35,5 @@ protected:
 		setTextInteractionFlags(Qt::NoTextInteraction);
 		QGraphicsTextItem::focusOutEvent(event);
 	}
+	void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)override;
 };

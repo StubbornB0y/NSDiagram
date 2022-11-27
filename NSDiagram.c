@@ -1,19 +1,27 @@
 #include<stdio.h>
 void main(){
-   asd
-   if(231){
-      if(asd){
-         asdc
+   3123123;
+   while(asdasd){
+      if(2){
+         while(asd){
+            if(2312){
+               ;
+            }
+            else{
+               ;
+            }
+            ;
+         }
+         ;
       }
       else{
-         asdqw2
+         do{
+            ;
+         }
+         while();
+         ;
       }
-      qwe2
+      ;
    }
-   else{
-      213
-   }
-   while(23123){
-      asd
-   }
+   ;
 }

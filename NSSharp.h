@@ -20,12 +20,12 @@ public:
 	NSSharp *exit;
 	NSSharp(QGraphicsItem* parent = 0);
 	void MouseSelect();				//选择子项时自动递归选择其parent函数
-	virtual void show();
+	virtual void show();				//更新绘制
 	virtual void update();				//递归更新其子项
-	virtual int count(int number);				//统计NS_JUDGE的c指针后的个数以便计算宽度
+	virtual int count(int number);		//统计NS_JUDGE的子项的个数以便计算宽度
 	int type() const;
-	void textshow();
-	virtual void F_out(int indent, QTextStream* out);
+	virtual void textshow();
+	virtual void F_out(int indent, QTextStream* out);	//递归输出
 protected:
 	//void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);//item内部画画
 
@@ -85,6 +85,16 @@ public:
 	void update();
 	NS_While(QGraphicsItem* parent = 0);
 	void show();
+};
+class NS_DoWhile :public NSSharp {
+public:
+	int childwidth;
+	int count(int number);
+	void F_out(int indent, QTextStream* out);
+	void update();
+	NS_DoWhile(QGraphicsItem* parent = 0);
+	void show();
+	void textshow()override;
 };
 
 #endif
