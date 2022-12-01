@@ -4,6 +4,8 @@
 #include <qfile.h>
 #include <QTextStream>
 #include <qdesktopservices.h>
+#include <QFileDialog>
+#include <qstring.h>
 My_GraphicsScene::My_GraphicsScene(QObject *parent)
 	: QGraphicsScene(parent)
 {
@@ -172,20 +174,135 @@ void My_GraphicsScene::ReceiveClickMassage(QPointF xy, SharpType sharptype)
       }
       this->sharptype = MouseType;    
 }
+void My_GraphicsScene::translatingNS()
+{
+      QString path = QFileDialog::getOpenFileName(0, "Open", "./", "source(*.c);;source(*.cpp)");
+      if (path.isEmpty() == false)
+      {
+            QFile* file = new QFile(path);
+            if (file->open(QIODevice::ReadOnly) == true)
+            {
+                  QString str;
+
+                  QTextStream* out = new QTextStream(file);
+                  QTextStream* copy = out;
+                  str = out->readLine();
+                  str = out->readLine();
+                  /*while (str.indexOf("#") != -1 && str.indexOf("main") != -1) {
+                        qDebug() << (str.indexOf("main"));
+                        copy = out;
+                        str = out->readLine();
+                  }*/
+                  readC(0, &topitem, out);
+                  file->close();
+                  topitem = dynamic_cast<NSSharp*>(topitem->topLevelItem());
+                  topitem->setPos(1430, 858);
+                  topitem->update();
+                  addItem(topitem);                 
+            }
+      }
+}
+void My_GraphicsScene::readC(NSSharp*parent, NSSharp** op, QTextStream* out)
+{
+      QString str;
+      str=out->readLine();
+      if (out->atEnd() == false) {
+            int place = -1;
+            if (str.indexOf("if(") >= 0) {
+                  place = str.indexOf("if(");
+                  *op = new NS_Judge(parent);
+                  int tail = str.indexOf(")");
+                  (*op)->a->setPlainText(str.mid(place + 3, tail - place - 3));
+                  removeItem((*op)->b);
+                  delete((*op)->b);
+                  (*op)->b = nullptr;
+                  NSSharp* opcopy = *op;
+                  readC(*op, &(*op)->b, out);
+                  QTextStream* copy = out;
+                  str = out->readLine();
+                  if (str.indexOf("else") >= 0) {
+                        readC(opcopy, &(opcopy)->c, out);
+                        readC(opcopy, &(opcopy)->exit, out);
+                  }
+                  else
+                        readC(opcopy, &(opcopy)->exit, copy);
+            }
+            else if (str.indexOf("while(") >= 0) {
+                  place = str.indexOf("while(");
+                  *op = new NS_While(parent);
+                  int tail = str.indexOf(")");
+                  (*op)->a->setPlainText(str.mid(place + 6, tail - place - 6));
+                  removeItem((*op)->b);
+                  delete((*op)->b);
+                  (*op)->b = nullptr;
+                  NSSharp* opcopy = *op;
+                  readC(*op, &(*op)->b, out);
+                  readC(opcopy, &(opcopy)->exit, out);
+            }
+            else if (str.indexOf("do{") >= 0) {
+                  place = str.indexOf("do{");
+                  *op = new NS_DoWhile(parent);
+                  removeItem((*op)->b);
+                  delete((*op)->b);
+                  (*op)->b = nullptr;
+                  NSSharp* opcopy = *op;
+                  readC(*op, &(*op)->b, out);
+                  str = out->readLine();
+                  if (str.indexOf("while (") >= 0) {
+                        place = str.indexOf("while(");
+                        int tail = str.indexOf(")");
+                        (*op)->a->setPlainText(str.mid(place + 6, tail - place - 6));
+                        readC(opcopy, &(opcopy)->exit, out);
+                  }
+            }
+            else if (str.indexOf("}") >= 0) {
+                  return;
+            }
+            else {
+                  for (place = 0; place < str.length(); place++) {
+                        if (str.at(place) != ' ') {
+                              break;
+                        }
+                  }
+                  if (place != str.length()) {
+                        int tail = str.indexOf(";");
+                        *op = new NS_Sequence(parent);
+                        if (tail != -1)
+                              (*op)->a->setPlainText(str.mid(place, tail - place));
+                        removeItem((*op)->b);
+                        delete((*op)->b);
+                        (*op)->b = nullptr;
+                        readC(*op, &(*op)->b, out);
+                  }
+                  else
+                        readC(parent, op, out);
+            }
+      }
+      else
+            return;
+}
 void My_GraphicsScene::translatingC() {
       qDebug() << "buttonclick";
-      QFile* file = new QFile("./NSDiagram.c");
-      if (!file->open(QIODevice::WriteOnly | QIODevice::Text)) {
-            qDebug() << "file open failed";
+      QString path = QFileDialog::getSaveFileName(0, "Save", "./", "source(*.c);;source(*.cpp)");
+      if (path.isEmpty() == false) {
+            QFile* file = new QFile(path);
+            if (!file->open(QIODevice::WriteOnly | QIODevice::Text)) {
+                  qDebug() << "file open failed";
+            }
+            else {
+                  QTextStream* out = new QTextStream(file);
+                  //向文件中写入两行字符串
+                  *out << "#include<stdio.h>" << "\n";
+                  *out << "void main(){" << "\n";
+                  if (topitem != nullptr) {
+                        topitem->F_out(1, out);
+                  }
+                  *out << "}" << "\n";
+                  file->close();
+                  QDesktopServices::openUrl(QUrl::fromLocalFile("./NSDiagram.c"));
+            }
       }
-      QTextStream* out=new QTextStream (file);
-      //向文件中写入两行字符串
-      *out << "#include<stdio.h>"<< "\n";
-      *out << "void main(){" << "\n";
-      if (topitem != nullptr) {
-            topitem->F_out(1,out);
-      }
-      *out << "}" << "\n";
-      file->close();
-      QDesktopServices::openUrl(QUrl::fromLocalFile("./NSDiagram.c"));
 }
+
+
+

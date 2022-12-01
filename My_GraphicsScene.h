@@ -33,11 +33,14 @@ signals:
 
 public slots:
 	void translatingC();
+	void translatingNS();
 	void SequenceType();
 	void JudgeType();
 	void WhileType();
 	void DoWhileType();
 	void ReceiveClickMassage(QPointF xy, SharpType sharptype);
+private:
+	void readC(NSSharp*parent, NSSharp** op, QTextStream* out);
 };
 
 #endif
